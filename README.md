@@ -8,9 +8,9 @@
 
 | 文件       | 作用                                                         |
 | ---------- | ------------------------------------------------------------ |
-| `client.c` | ESP8266 客户端固件：读取 DHT11 并通过 MQTT 上报数据          |
-| `server.c` | C 后台服务：订阅 MQTT 消息，写入 SQLite，并触发 Server 酱微信报警 |
-| `web.py`   | Flask Web 服务：提供 RESTful API，用于前端或移动端获取设备数据 |
+| `dht_client.c` | ESP8266 客户端固件：读取 DHT11 并通过 MQTT 上报数据          |
+| `dht_server.c` | C 后台服务：订阅 MQTT 消息，写入 SQLite，并触发 Server 酱微信报警 |
+| `dht_web.py`   | Flask Web 服务：提供 RESTful API，用于前端或移动端获取设备数据 |
 
 ------
 
@@ -20,12 +20,12 @@
 [ESP8266 + DHT11] 
         │ (WiFi)
         ↓
-   [MQTT Broker] ←→ [server.c 后台服务] → [Server 酱 → 微信通知]
+   [MQTT Broker] ←→ [dht_server.c 后台服务] → [Server 酱 → 微信通知]
         │                │
         │                ↓
         │           [SQLite: dht_data.db]
         │                │
-        └────→ [Flask Web API (web.py)] ←→ [Web 前端 / 移动端]
+        └────→ [Flask Web API (dht_web.py)] ←→ [Web 前端 / 移动端]
 ```
 
 ------
@@ -57,12 +57,12 @@
 - **ESP8266**（如 NodeMCU）
 - **DHT11** 数据引脚接 **GPIO2**（即 D4）
 
-### 2. 配置客户端 (`client.c`)
+### 2. 配置客户端 (`dht_client.c`)
 
 ```c
 const char* ssid = "你的WiFi名称";
 const char* password = "你的WiFi密码";
-const char* mqtt_server = "192.168.1.69"; // 运行 server.c 的服务器 IP
+const char* mqtt_server = "192.168.1.69"; // 运行 dht_server.c 的服务器 IP
 const char* client_id = "location_1";     // 每个设备必须唯一！
 ```
 
@@ -77,31 +77,31 @@ sudo apt install mosquitto
 sudo systemctl start mosquitto
 ```
 
-### 4. 编译并运行服务端 (`server.c`)
+### 4. 编译并运行服务端 (`dht_server.c`)
 
 依赖：`libmosquitto-dev`, `libsqlite3-dev`, `libcurl4-openssl-dev`
 
 ```bash
-gcc server.c -o server \
+gcc dht_server.c -o dht_server \
   -lmosquitto -lsqlite3 -lcurl \
   -Wall -O2
 
-./server
+./dht_server
 ```
 
-> ⚠️ **重要**：编辑 `server.c`，将 `SERVER_CHAN_KEY` 替换为你自己的 [Server 酱 SCKEY](https://sct.ftqq.com/)：
+> ⚠️ **重要**：编辑 `dht_server.c`，将 `SERVER_CHAN_KEY` 替换为你自己的 [Server 酱 SCKEY](https://sct.ftqq.com/)：
 >
 > ```c
 > #define SERVER_CHAN_KEY ""
 > ```
 
-### 5. 启动 Web API (`web.py`)
+### 5. 启动 Web API (`dht_web.py`)
 
 依赖：`flask`, `flask-cors`
 
 ```bash
 pip install flask flask-cors
-python3 web.py
+python3 dht_web.py
 ```
 
 访问 `http://<服务器IP>:5000` 查看简易前端，或直接调用 API：
@@ -140,7 +140,7 @@ python3 web.py
 
 ------
 
-## 🛠️ 可配置参数（`server.c` 中）
+## 🛠️ 可配置参数（`dht_server.c` 中）
 
 ```c
 #define CACHE_INTERVAL_SEC 180    // 历史数据写入间隔（秒）
