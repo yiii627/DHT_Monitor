@@ -1,16 +1,20 @@
 # 嵌入式温湿度监控系统
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-ESP8266-blue.svg)](https://www.nodemcu.com/)
+
 > 一个基于 **ESP8266 + DHT11 + MQTT + SQLite + Flask** 的轻量级物联网监控系统，支持多设备数据采集、实时状态更新、历史记录存储、阈值报警推送（微信）与 Web API 查询。
 
 ------
 
 ## 📦 项目组成
 
-| 文件       | 作用                                                         |
-| ---------- | ------------------------------------------------------------ |
-| `dht_client.c` | ESP8266 客户端固件：读取 DHT11 并通过 MQTT 上报数据          |
-| `dht_server.c` | C 后台服务：订阅 MQTT 消息，写入 SQLite，并触发 Server 酱微信报警 |
-| `dht_web.py`   | Flask Web 服务：提供 RESTful API，用于前端或移动端获取设备数据 |
+| 文件             | 作用                                                         |
+| ---------------- | ------------------------------------------------------------ |
+| `dht_client.c`   | ESP8266 客户端固件：读取 DHT11 并通过 MQTT 上报数据          |
+| `dht_server.c`   | C 后台服务：订阅 MQTT 消息，写入 SQLite，并触发 Server 酱微信报警 |
+| `dht_web.py`     | Flask Web 服务：提供 RESTful API，用于前端或移动端获取设备数据 |
+| `index.html`     | 简易 Web 前端（可选）                                        |
 
 ------
 
@@ -154,15 +158,15 @@ python3 dht_web.py
 
 ## 📝 未来改进
 
--  支持动态阈值配置（通过 API）
--  增加 HTTPS 与用户认证
--  支持更多传感器（DHT22、BME280）
+- [ ] 支持动态阈值配置（通过 API）
+- [ ] 增加 HTTPS 与用户认证
+- [ ] 支持更多传感器（DHT22、BME280）
 
 ------
 
 ## 📄 许可证
 
-MIT License
+MIT License - 详见 [LICENSE](LICENSE) 文件
 
 ------
 
